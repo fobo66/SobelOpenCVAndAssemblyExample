@@ -4,11 +4,10 @@
 #else
 #include "sse2neon.h"
 #endif
-#include <mach/mach.h>
-#include <mach/mach_time.h>
 #include <unistd.h>
 
 #include <iostream>
+#include <chrono>
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -70,10 +69,8 @@ int main(int argc, char* argv[]) {
 	char const *proc_file = "lena_proc.bmp";
 	char const *proc2_file = "lena_proc2.bmp";
 
-    uint64_t before = 0;
-    uint64_t after = 0;
-    uint64_t asmTimer = 0;
-    uint64_t nativeTimer = 0;
+    std::chrono::time_point<std::chrono::system_clock> before;
+    std::chrono::time_point<std::chrono::system_clock> after;
 
     Mat src, dst, asmDst;
     Mat grad_x, grad_y;
@@ -87,7 +84,7 @@ int main(int argc, char* argv[]) {
     if( !src.data )
     { return -1;  }
 
-    before = mach_absolute_time();
+    before = std::chrono::system_clock::now();
     GaussianBlur( src, src, Size(3,3), 0, 0, BORDER_DEFAULT );
 
     // Gradient X
@@ -98,12 +95,12 @@ int main(int argc, char* argv[]) {
     convertScaleAbs( grad_x, abs_grad_x );
     convertScaleAbs( grad_y, abs_grad_y );
     addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, dst);
-    after = mach_absolute_time();
-    nativeTimer = after - before;
+    after = std::chrono::system_clock::now();
+    std::chrono::duration<double> nativeTimer = after - before;
 
 
     asmDst = src.clone();
-    before = mach_absolute_time();
+    before = std::chrono::system_clock::now();
     for (int y = 1; y < src.rows - 1; y++) {
         for (int x = 1; x < src.cols - 1; x++) {
             gx = xGradientAsm(src, x, y);
@@ -114,8 +111,8 @@ int main(int argc, char* argv[]) {
             asmDst.at<uchar>(y,x) = sum;
         }
     }
-    after = mach_absolute_time();
-    asmTimer = after - before;
+    after = std::chrono::system_clock::now();
+    std::chrono::duration<double> asmTimer = after - before;
 
     namedWindow("C++ Sobel");
     imshow("C++ Sobel", dst);
@@ -129,7 +126,7 @@ int main(int argc, char* argv[]) {
     namedWindow("initial");
     imshow("initial", src);
 
-    std::cout << "C++ timing: " << nativeTimer << " Assembly timing: " << asmTimer << std::endl;
+    std::cout << "C++ timing: " << nativeTimer.count() << " Assembly timing: " << asmTimer.count() << std::endl;
 
     waitKey(0);
 
