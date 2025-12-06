@@ -16,24 +16,24 @@
 using namespace cv;
 
 // Computes the x component of the gradient vector
-// at a given point in a image.
+// at a given point in an image.
 // returns gradient in the x direction
-int xGradientAsm(Mat image, int x, int y) {
+int xGradientAsm(Mat image, const int x, const int y) {
     _mm_empty();
-    __m128i part1 = _mm_cvtsi32_si128((int) image.at<uchar>(y - 1, x - 1));
-    __m128i part2 = _mm_cvtsi32_si128((int) image.at<uchar>(y, x - 1));
-    __m128i part3 = _mm_cvtsi32_si128((int) image.at<uchar>(y + 1, x - 1));
-    __m128i part4 = _mm_cvtsi32_si128((int) image.at<uchar>(y - 1, x + 1));
-    __m128i part5 = _mm_cvtsi32_si128((int) image.at<uchar>(y, x + 1));
-    __m128i part6 = _mm_cvtsi32_si128((int) image.at<uchar>(y + 1, x + 1));
-    __m128i multiplier = _mm_cvtsi32_si128(2);
-    __m128i part2s = _mm_mullo_epi16(part2, multiplier);
-    __m128i part5s = _mm_mullo_epi16(part2, multiplier);
-    __m128i gx = _mm_add_epi32(part1, part2s);
-    __m128i gx1 = _mm_add_epi32(gx, part3);
-    __m128i gx2 = _mm_sub_epi32(gx1, part4);
-    __m128i gx3 = _mm_sub_epi32(gx2, part5s);
-    __m128i gx4 = _mm_sub_epi32(gx3, part6);
+    const __m128i part1 = _mm_cvtsi32_si128(image.at<uchar>(y - 1, x - 1));
+    const __m128i part2 = _mm_cvtsi32_si128(image.at<uchar>(y, x - 1));
+    const __m128i part3 = _mm_cvtsi32_si128(image.at<uchar>(y + 1, x - 1));
+    const __m128i part4 = _mm_cvtsi32_si128(image.at<uchar>(y - 1, x + 1));
+    const __m128i part5 = _mm_cvtsi32_si128(image.at<uchar>(y, x + 1));
+    const __m128i part6 = _mm_cvtsi32_si128(image.at<uchar>(y + 1, x + 1));
+    const __m128i multiplier = _mm_cvtsi32_si128(2);
+    const __m128i part2s = _mm_mullo_epi16(part2, multiplier);
+    const __m128i part5s = _mm_mullo_epi16(part5, multiplier);
+    const __m128i gx = _mm_add_epi32(part1, part2s);
+    const __m128i gx1 = _mm_add_epi32(gx, part3);
+    const __m128i gx2 = _mm_sub_epi32(gx1, part4);
+    const __m128i gx3 = _mm_sub_epi32(gx2, part5s);
+    const __m128i gx4 = _mm_sub_epi32(gx3, part6);
 
 
     return _mm_cvtsi128_si32(gx4);
@@ -41,33 +41,33 @@ int xGradientAsm(Mat image, int x, int y) {
 
 
 // Computes the y component of the gradient vector
-// at a given point in a image
+// at a given point in an image
 // returns gradient in the y direction
-int yGradientAsm(Mat image, int x, int y) {
+int yGradientAsm(Mat image, const int x, const int y) {
     _mm_empty();
-    __m128i part1 = _mm_cvtsi32_si128((int) image.at<uchar>(y - 1, x - 1));
-    __m128i part2 = _mm_cvtsi32_si128((int) image.at<uchar>(y - 1, x));
-    __m128i part3 = _mm_cvtsi32_si128((int) image.at<uchar>(y - 1, x + 1));
-    __m128i part4 = _mm_cvtsi32_si128((int) image.at<uchar>(y + 1, x - 1));
-    __m128i part5 = _mm_cvtsi32_si128((int) image.at<uchar>(y + 1, x));
-    __m128i part6 = _mm_cvtsi32_si128((int) image.at<uchar>(y + 1, x + 1));
-    __m128i multiplier = _mm_cvtsi32_si128(2);
-    __m128i part2s = _mm_mullo_epi16(part2, multiplier);
-    __m128i part5s = _mm_mullo_epi16(part2, multiplier);
-    __m128i gx = _mm_add_epi32(part1, part2s);
-    __m128i gx1 = _mm_add_epi32(gx, part3);
-    __m128i gx2 = _mm_sub_epi32(gx1, part4);
-    __m128i gx3 = _mm_sub_epi32(gx2, part5s);
-    __m128i gx4 = _mm_sub_epi32(gx3, part6);
+    const __m128i part1 = _mm_cvtsi32_si128(image.at<uchar>(y - 1, x - 1));
+    const __m128i part2 = _mm_cvtsi32_si128(image.at<uchar>(y - 1, x));
+    const __m128i part3 = _mm_cvtsi32_si128(image.at<uchar>(y - 1, x + 1));
+    const __m128i part4 = _mm_cvtsi32_si128(image.at<uchar>(y + 1, x - 1));
+    const __m128i part5 = _mm_cvtsi32_si128(image.at<uchar>(y + 1, x));
+    const __m128i part6 = _mm_cvtsi32_si128(image.at<uchar>(y + 1, x + 1));
+    const __m128i multiplier = _mm_cvtsi32_si128(2);
+    const __m128i part2s = _mm_mullo_epi16(part2, multiplier);
+    const __m128i part5s = _mm_mullo_epi16(part5, multiplier);
+    const __m128i gx = _mm_add_epi32(part1, part2s);
+    const __m128i gx1 = _mm_add_epi32(gx, part3);
+    const __m128i gx2 = _mm_sub_epi32(gx1, part4);
+    const __m128i gx3 = _mm_sub_epi32(gx2, part5s);
+    const __m128i gx4 = _mm_sub_epi32(gx3, part6);
 
     return  _mm_cvtsi128_si32(gx4);
 }
 
 
-int main(int argc, char* argv[]) {
-    char const *src_file = "lena.bmp";
-	char const *proc_file = "lena_proc.bmp";
-	char const *proc2_file = "lena_proc2.bmp";
+int main() {
+    auto src_file = "lena.bmp";
+	auto proc_file = "lena_proc.bmp";
+	auto proc2_file = "lena_proc2.bmp";
 
     std::chrono::time_point<std::chrono::system_clock> before;
     std::chrono::time_point<std::chrono::system_clock> after;
