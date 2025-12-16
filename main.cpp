@@ -66,7 +66,7 @@ int yGradientAsm(Mat image, const int x, const int y) {
 
 
 int main() {
-    auto src_file = std::filesystem::path("lena.bmp");
+    auto src_file = std::filesystem::path("resources/lena.bmp");
     auto proc_file = std::filesystem::path("lena_proc.bmp");
     auto proc2_file = std::filesystem::path("lena_proc2.bmp");
 

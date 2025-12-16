@@ -15,7 +15,7 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-set(SOURCE_EXE main.cpp)
+set(SOURCE_EXE main.cpp resources/lena.bmp)
 
 add_executable(main ${SOURCE_EXE})
 
@@ -24,3 +24,12 @@ if(ARCHITECTURE EQUAL "arm64")
 endif()
 
 target_link_libraries(main ${OpenCV_LIBS})
+
+add_custom_target(copy_resources ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/resources
+        ${PROJECT_BINARY_DIR}/resources
+        COMMENT "Copying resources into binary directory")
+
+add_dependencies(main copy_resources)
+
