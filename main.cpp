@@ -1,10 +1,10 @@
 // MMX example
 #ifdef __x86_64__
-#include <x86intrin.h>
+#include <xmmintrin.h>     //SSE
+#include <emmintrin.h>     //SSE2
 #else
 #include "sse2neon.h"
 #endif
-#include <unistd.h>
 
 #include <iostream>
 #include <chrono>
@@ -60,14 +60,14 @@ int yGradientAsm(Mat image, const int x, const int y) {
     const __m128i gx3 = _mm_sub_epi32(gx2, part5s);
     const __m128i gx4 = _mm_sub_epi32(gx3, part6);
 
-    return  _mm_cvtsi128_si32(gx4);
+    return _mm_cvtsi128_si32(gx4);
 }
 
 
 int main() {
     auto src_file = "lena.bmp";
-	auto proc_file = "lena_proc.bmp";
-	auto proc2_file = "lena_proc2.bmp";
+    auto proc_file = "lena_proc.bmp";
+    auto proc2_file = "lena_proc2.bmp";
 
     std::chrono::time_point<std::chrono::system_clock> before;
     std::chrono::time_point<std::chrono::system_clock> after;
@@ -78,23 +78,22 @@ int main() {
 
     int gx, gy, sum;
 
-      // Load an image
-    src = imread(src_file,  IMREAD_GRAYSCALE);
+    // Load an image
+    src = imread(src_file, IMREAD_GRAYSCALE);
 
-    if( !src.data )
-    { return -1;  }
+    if (!src.data) { return -1; }
 
     before = std::chrono::system_clock::now();
-    GaussianBlur( src, src, Size(3,3), 0, 0, BORDER_DEFAULT );
+    GaussianBlur(src, src, Size(3, 3), 0, 0, BORDER_DEFAULT);
 
     // Gradient X
     Sobel(src, grad_x, CV_16S, 1, 0);
     // Gradient Y
     Sobel(src, grad_y, CV_16S, 0, 1);
 
-    convertScaleAbs( grad_x, abs_grad_x );
-    convertScaleAbs( grad_y, abs_grad_y );
-    addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, dst);
+    convertScaleAbs(grad_x, abs_grad_x);
+    convertScaleAbs(grad_y, abs_grad_y);
+    addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, dst);
     after = std::chrono::system_clock::now();
     std::chrono::duration<double> nativeTimer = after - before;
 
@@ -108,7 +107,7 @@ int main() {
             sum = abs(gx) + abs(gy);
             sum = sum > 255 ? 255 : sum;
             sum = sum < 0 ? 0 : sum;
-            asmDst.at<uchar>(y,x) = sum;
+            asmDst.at<uchar>(y, x) = sum;
         }
     }
     after = std::chrono::system_clock::now();
@@ -132,4 +131,3 @@ int main() {
 
     return 0;
 }
-
