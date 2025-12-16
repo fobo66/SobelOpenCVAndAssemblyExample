@@ -7,6 +7,7 @@
 #endif
 
 #include <iostream>
+#include <filesystem>
 #include <chrono>
 
 #include <opencv2/imgproc/imgproc.hpp>
@@ -65,9 +66,9 @@ int yGradientAsm(Mat image, const int x, const int y) {
 
 
 int main() {
-    auto src_file = "lena.bmp";
-    auto proc_file = "lena_proc.bmp";
-    auto proc2_file = "lena_proc2.bmp";
+    auto src_file = std::filesystem::path("lena.bmp");
+    auto proc_file = std::filesystem::path("lena_proc.bmp");
+    auto proc2_file = std::filesystem::path("lena_proc2.bmp");
 
     std::chrono::time_point<std::chrono::system_clock> before;
     std::chrono::time_point<std::chrono::system_clock> after;
